@@ -2,8 +2,9 @@ package com.pardyl.chatbot.core.entities;
 
 import com.pardyl.chatbot.core.BotInstance;
 
+import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
+import java.io.File;
 
 public abstract class Channel {
     /**
@@ -32,6 +33,8 @@ public abstract class Channel {
     }
 
     public abstract void sendMessage(Message message, BotInstance bot);
+
+    public abstract void sendFile(File file, String uploadName, Message message);
 
     public abstract void addReaction(Message message, Reaction reaction, BotInstance bot);
 }

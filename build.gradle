@@ -1,12 +1,13 @@
 plugins {
     id 'java'
+    id 'java-library'
     id 'maven'
     id 'maven-publish'
     id "com.jfrog.bintray" version "1.7.3"
 }
 
 group 'com.pardyl.chatbot'
-version '1.0'
+version '1.1'
 
 sourceCompatibility = 1.8
 
@@ -18,20 +19,54 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
+def pomConfig = {
+    licenses {
+        license {
+            name "MIT License"
+            url "https://opensource.org/licenses/MIT"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "apardyl"
+            name "Adam Pardyl"
+            email "adam@pardyl.com"
+        }
+    }
+
+    scm {
+        url "https://github.com/apardyl/chatbot-core"
+    }
+}
+
 publishing {
     publications {
         bintrayMaven(MavenPublication) {
             from components.java
             groupId 'com.pardyl.chatbot'
             artifactId 'core'
-            version '1.0'
+            artifact sourcesJar
+            version project.version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'chatbot core classes')
+                root.appendNode('name', 'chatbot-core')
+                root.appendNode('url', 'https://github.com/apardyl/chatbot-core')
+                root.children().last() + pomConfig
+            }
         }
     }
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from 'src/main/java'
+}
+
 bintray {
-//    user =
-//    key =
+    user = 'apardyl'
+    key = 'key'
     publications = ['bintrayMaven']
 
     pkg {
