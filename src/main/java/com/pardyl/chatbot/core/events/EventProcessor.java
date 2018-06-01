@@ -1,4 +1,4 @@
-package com.pardyl.chatbot.core.com.pardyl.chatbot.events;
+package com.pardyl.chatbot.core.events;
 
 public interface EventProcessor {
     /**

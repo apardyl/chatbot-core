@@ -1,4 +1,4 @@
-package com.pardyl.chatbot.core.com.pardyl.chatbot.events;
+package com.pardyl.chatbot.core.events;
 
 import com.pardyl.chatbot.core.entities.Message;
 import com.pardyl.chatbot.core.entities.Reaction;

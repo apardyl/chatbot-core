@@ -1,8 +1,8 @@
 package com.pardyl.chatbot.core;
 
-import com.pardyl.chatbot.core.com.pardyl.chatbot.events.Event;
-import com.pardyl.chatbot.core.com.pardyl.chatbot.events.EventAction;
-import com.pardyl.chatbot.core.com.pardyl.chatbot.events.EventProcessor;
+import com.pardyl.chatbot.core.events.Event;
+import com.pardyl.chatbot.core.events.EventAction;
+import com.pardyl.chatbot.core.events.EventProcessor;
 import com.pardyl.chatbot.core.entities.MessageFactory;
 import com.pardyl.chatbot.core.entities.Server;
 

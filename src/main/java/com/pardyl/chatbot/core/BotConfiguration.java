@@ -1,6 +1,6 @@
 package com.pardyl.chatbot.core;
 
-import com.pardyl.chatbot.core.com.pardyl.chatbot.events.EventProcessor;
+import com.pardyl.chatbot.core.events.EventProcessor;
 
 import java.util.List;
 
