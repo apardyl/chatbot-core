@@ -6,6 +6,7 @@ import com.pardyl.chatbot.core.events.EventProcessor;
 import com.pardyl.chatbot.core.entities.MessageFactory;
 import com.pardyl.chatbot.core.entities.Server;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public abstract class BotInstance {
 
     public abstract void shutdown();
 
-    public OutputStream runAdminTask(String taskName) {
+    public InputStream runAdminTask(String taskName) {
         throw new UnsupportedOperationException();
     }
 
