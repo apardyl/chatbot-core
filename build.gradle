@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'maven-publish'
+    id "com.jfrog.bintray" version "1.7.3"
+}
+
+group 'com.pardyl.chatbot'
+version '1.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+publishing {
+    publications {
+        bintrayMaven(MavenPublication) {
+            from components.java
+            groupId 'com.pardyl.chatbot'
+            artifactId 'core'
+            version '1.0'
+        }
+    }
+}
+
+bintray {
+//    user =
+//    key =
+    publications = ['bintrayMaven']
+
+    pkg {
+        repo = 'maven'
+        name = 'chatbot-core'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/apardyl/chatbot-core.git'
+        version {
+            name = project.version
+        }
+    }
+}
