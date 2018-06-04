@@ -50,7 +50,7 @@ public abstract class BotInstance {
 
     public abstract MessageFactory getMessageFactory();
 
-    public void process(Event event) {
+    public final void process(Event event) {
         eventProcessors.parallelStream().forEach(processor -> {
             EventAction action = processor.trigger(event);
             if (action != null) {
@@ -59,7 +59,7 @@ public abstract class BotInstance {
         });
     }
 
-    public void schedule(EventAction action, long delaySeconds) {
-        pool.schedule(() -> action.run(this), delaySeconds, TimeUnit.SECONDS);
+    public final void schedule(EventAction action, long delayMilliseconds) {
+        pool.schedule(() -> action.run(this), delayMilliseconds, TimeUnit.MILLISECONDS);
     }
 }
