@@ -34,6 +34,10 @@ public abstract class Server {
 
     public abstract List<User> getUsers();
 
+    public boolean isMember(User user) {
+        return getUsers().contains(user);
+    }
+
     /**
      * Returns user matching given name. If more than one channel matches returns any.
      */
@@ -82,9 +86,19 @@ public abstract class Server {
 
     public abstract void kickUser(User user, BotInstance bot);
 
+    public abstract void banUser(User user, BotInstance bot);
+
     public abstract boolean isUserOnline(User user);
 
     public List<User> getOnlineUsers() {
         return getUsers().stream().filter(this::isUserOnline).collect(Collectors.toList());
+    }
+
+    public abstract List<Role> getRolesForUser(User user);
+
+    public abstract List<User> getUsersForRole(Role role);
+
+    public boolean hasRole(User user, Role role) {
+        return getRolesForUser(user).contains(role);
     }
 }
