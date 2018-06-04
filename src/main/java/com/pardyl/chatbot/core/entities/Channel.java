@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Channel {
-    private static final int TYPING_CHARS_PER_SECOND = 3;
+    private static final int TYPING_CHARS_PER_SECOND = 8;
     private static final double TYPING_SPEED_MAX_DEVIATION = 0.25;
 
     /**
@@ -63,7 +63,7 @@ public abstract class Channel {
     public void sendMessageTyping(Message message, BotInstance bot) {
         sendIsTyping(bot);
         long delay = (long) (TimeUnit.SECONDS.toMillis(1) * message.getText().length()
-                * TYPING_CHARS_PER_SECOND * ThreadLocalRandom.current()
+                / TYPING_CHARS_PER_SECOND * ThreadLocalRandom.current()
                 .nextDouble(1 - TYPING_SPEED_MAX_DEVIATION, 1 + TYPING_SPEED_MAX_DEVIATION));
         bot.schedule((instance) -> sendMessage(message, instance), delay);
     }
