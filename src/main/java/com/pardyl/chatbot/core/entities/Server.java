@@ -3,6 +3,7 @@ package com.pardyl.chatbot.core.entities;
 import com.pardyl.chatbot.core.BotInstance;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class Server {
     /**
@@ -80,4 +81,10 @@ public abstract class Server {
     }
 
     public abstract void kickUser(User user, BotInstance bot);
+
+    public abstract boolean isUserOnline(User user);
+
+    public List<User> getOnlineUsers() {
+        return getUsers().stream().filter(this::isUserOnline).collect(Collectors.toList());
+    }
 }
