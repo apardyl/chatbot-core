@@ -12,4 +12,6 @@ public interface Message {
     List<User> getMentionedUsers();
 
     List<Role> getMentionedRoles();
+
+    List<Channel> getMentionedChannels();
 }
