@@ -1,7 +1,5 @@
 package com.pardyl.chatbot.core.entities;
 
-import com.pardyl.chatbot.core.BotInstance;
-
 public interface User {
     /**
      * Returns user's display name

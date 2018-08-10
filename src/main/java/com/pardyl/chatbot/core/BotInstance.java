@@ -17,7 +17,15 @@ import java.util.concurrent.TimeUnit;
 public abstract class BotInstance {
     private ScheduledExecutorService pool = Executors.newScheduledThreadPool(1);
 
-    protected List<EventProcessor> eventProcessors;
+    private final List<EventProcessor> eventProcessors;
+
+    public final boolean addEventProcessor(EventProcessor eventProcessor) {
+        return eventProcessors.add(eventProcessor);
+    }
+
+    public final boolean removeEventProcessor(EventProcessor eventProcessor) {
+        return eventProcessors.remove(eventProcessor);
+    }
 
     protected BotInstance(BotConfiguration configuration) {
         this.eventProcessors = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.pardyl.chatbot.core.entities;
 
 import com.pardyl.chatbot.core.BotInstance;
 
+import java.io.InputStream;
 import java.util.List;
 import java.io.File;
 import java.util.concurrent.ThreadLocalRandom;
@@ -54,7 +55,9 @@ public abstract class Channel {
         sendMessage(bot.getMessageFactory().appendMentionRole(mention).build(), bot);
     }
 
-    public abstract void sendFile(File file, String uploadName, Message message);
+    public abstract void sendFile(File file, String uploadName, Message message, BotInstance bot);
+
+    public abstract void sendFile(InputStream data, String uploadName, Message message, BotInstance bot);
 
     public abstract void addReaction(Message message, Reaction reaction, BotInstance bot);
 
