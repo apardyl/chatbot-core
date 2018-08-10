@@ -12,6 +12,6 @@ public abstract class BotConfiguration {
     }
 
     public double getTypingSpeedMaxDeviation() {
-        return 0.25;
+        return 0.2;
     }
 }

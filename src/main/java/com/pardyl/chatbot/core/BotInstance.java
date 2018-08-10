@@ -18,6 +18,8 @@ public abstract class BotInstance {
     private ScheduledExecutorService pool = Executors.newScheduledThreadPool(1);
 
     private final List<EventProcessor> eventProcessors;
+    private final long typingSpeed;
+    private final double typingSpeedMaxDeviation;
 
     public final boolean addEventProcessor(EventProcessor eventProcessor) {
         return eventProcessors.add(eventProcessor);
@@ -30,6 +32,8 @@ public abstract class BotInstance {
     protected BotInstance(BotConfiguration configuration) {
         this.eventProcessors = new ArrayList<>();
         this.eventProcessors.addAll(configuration.getEventProcessors());
+        this.typingSpeed = configuration.getTypingSpeed();
+        this.typingSpeedMaxDeviation = configuration.getTypingSpeedMaxDeviation();
     }
 
     public abstract void run();
@@ -69,5 +73,13 @@ public abstract class BotInstance {
 
     public final void schedule(EventAction action, long delayMilliseconds) {
         pool.schedule(() -> action.run(this), delayMilliseconds, TimeUnit.MILLISECONDS);
+    }
+
+    public final long getTypingSpeed() {
+        return typingSpeed;
+    }
+
+    public final double getTypingSpeedMaxDeviation() {
+        return typingSpeedMaxDeviation;
     }
 }

@@ -3,15 +3,16 @@ package com.pardyl.chatbot.core.entities;
 import com.pardyl.chatbot.core.BotInstance;
 
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.io.File;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public abstract class Channel {
-    private static final int TYPING_CHARS_PER_SECOND = 8;
-    private static final double TYPING_SPEED_MAX_DEVIATION = 0.25;
-
     /**
      * Returns channel's display name
      */
@@ -64,15 +65,34 @@ public abstract class Channel {
     public abstract void sendIsTyping(BotInstance bot);
 
     public void sendMessageTyping(Message message, BotInstance bot) {
+        sendMessageTyping(Collections.singleton(message), bot);
+    }
+
+    public void sendMessageTyping(Iterable<Message> messages, BotInstance bot) {
+        sendMessageTyping(messages.iterator(), bot);
+    }
+
+    public void sendMessageTyping(Iterator<Message> messages, BotInstance bot) {
+        if (!messages.hasNext()) {
+            return;
+        }
         sendIsTyping(bot);
-        long delay = (long) (TimeUnit.SECONDS.toMillis(1) * message.getText().length()
-                / TYPING_CHARS_PER_SECOND * ThreadLocalRandom.current()
-                .nextDouble(1 - TYPING_SPEED_MAX_DEVIATION, 1 + TYPING_SPEED_MAX_DEVIATION));
-        bot.schedule((instance) -> sendMessage(message, instance), delay);
+        Message m = messages.next();
+        long delay = (long) (TimeUnit.SECONDS.toMillis(1) * m.getText().length()
+                / bot.getTypingSpeed() * ThreadLocalRandom.current()
+                .nextDouble(1 - bot.getTypingSpeedMaxDeviation(), 1 + bot.getTypingSpeedMaxDeviation()));
+        bot.schedule((instance) -> {
+            sendMessage(m, instance);
+            sendMessageTyping(messages, bot);
+        }, delay);
     }
 
     public void sendMessageTyping(String text, BotInstance bot) {
         sendMessageTyping(bot.getMessageFactory().appendText(text).build(), bot);
+    }
+
+    public void sendMessageTyping(Collection<String> text, BotInstance bot) {
+        sendMessageTyping(text.stream().map(t -> bot.getMessageFactory().appendText(t).build()).collect(Collectors.toList()), bot);
     }
 
     public void sendMessageTyping(Reaction reaction, BotInstance bot) {
