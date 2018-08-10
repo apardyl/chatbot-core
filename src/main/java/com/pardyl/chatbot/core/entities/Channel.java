@@ -40,6 +40,10 @@ public abstract class Channel {
 
     public abstract void sendMessage(Message message, BotInstance bot);
 
+    public void sendMessage(Iterable<Message> messages, BotInstance bot) {
+        messages.forEach(message -> sendMessage(message, bot));
+    }
+
     public void sendMessage(String text, BotInstance bot) {
         sendMessage(bot.getMessageFactory().appendText(text).build(), bot);
     }

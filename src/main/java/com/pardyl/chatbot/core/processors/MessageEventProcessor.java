@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 
 public final class MessageEventProcessor implements EventProcessor {
     private final Predicate<Message> predicate;
-    private final EventAction action;
+    private MessageResponse response;
 
     private static class MessageEventProcessorBuilder {
         private Predicate<Message> predicateM = (message -> true);
@@ -21,14 +21,18 @@ public final class MessageEventProcessor implements EventProcessor {
             }
         }
 
-        public MessageEventProcessor act(EventAction action) {
-            return new MessageEventProcessor(predicateM, action);
+        public MessageEventProcessor respond(EventAction action) {
+            return new MessageEventProcessor(predicateM, (m) -> action);
+        }
+
+        public MessageEventProcessor respond(MessageResponse response) {
+            return new MessageEventProcessor(predicateM, response);
         }
     }
 
-    private MessageEventProcessor(Predicate<Message> predicate, EventAction action) {
+    private MessageEventProcessor(Predicate<Message> predicate, MessageResponse response) {
         this.predicate = predicate;
-        this.action = action;
+        this.response = response;
     }
 
     /**
@@ -41,6 +45,7 @@ public final class MessageEventProcessor implements EventProcessor {
 
     @Override
     public final EventAction trigger(Event event) {
-        return event instanceof OnMessageEvent && predicate.test(((OnMessageEvent) event).message) ? action : null;
+        return event instanceof OnMessageEvent && predicate.test(((OnMessageEvent) event).message) ?
+                response.respondTo(((OnMessageEvent) event).message) : null;
     }
 }
