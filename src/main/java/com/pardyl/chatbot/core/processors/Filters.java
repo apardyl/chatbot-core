@@ -6,51 +6,51 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
 public final class Filters {
-    public static MessageFilter sendBy(User user) {
+    public static MessageFilter author(User user) {
         return message -> message.getAuthor().equals(user);
     }
 
-    public static MessageFilter sendById(String user) {
+    public static MessageFilter authorId(String user) {
         return message -> message.getAuthor().getId().equals(user);
     }
 
-    public static MessageFilter sendByName(String user) {
+    public static MessageFilter authorName(String user) {
         return message -> message.getAuthor().getName().equals(user);
     }
 
-    public static MessageFilter inChannel(Channel channel) {
+    public static MessageFilter channel(Channel channel) {
         return message -> message.getChannel().equals(channel);
     }
 
-    public static MessageFilter inChannelId(String channel) {
+    public static MessageFilter channelId(String channel) {
         return message -> message.getChannel().getId().equals(channel);
     }
 
-    public static MessageFilter inChannelName(String channel) {
+    public static MessageFilter channelName(String channel) {
         return message -> message.getChannel().getName().equals(channel);
     }
 
-    public static MessageFilter inServer(Server server) {
+    public static MessageFilter server(Server server) {
         return message -> message.getChannel().getServer().equals(server);
     }
 
-    public static MessageFilter inServerId(String server) {
+    public static MessageFilter serverId(String server) {
         return message -> message.getChannel().getServer().getId().equals(server);
     }
 
-    public static MessageFilter inServerName(String server) {
+    public static MessageFilter serverName(String server) {
         return message -> message.getChannel().getServer().getName().equals(server);
     }
 
-    public static MessageFilter senderHasRole(Role role) {
+    public static MessageFilter authorHasRole(Role role) {
         return message -> message.getChannel().getServer().hasRole(message.getAuthor(), role);
     }
 
-    public static MessageFilter senderHasRoleId(String role) {
+    public static MessageFilter authorHasRoleId(String role) {
         return message -> message.getChannel().getServer().hasRole(message.getAuthor(), message.getChannel().getServer().getRoleForId(role));
     }
 
-    public static MessageFilter senderHasRoleName(String role) {
+    public static MessageFilter authorHasRoleName(String role) {
         return message -> message.getChannel().getServer().hasRole(message.getAuthor(), message.getChannel().getServer().getRoleForName(role));
     }
 

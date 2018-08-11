@@ -3,11 +3,19 @@ package com.pardyl.chatbot.core.processors;
 import com.pardyl.chatbot.core.BotInstance;
 import com.pardyl.chatbot.core.entities.Message;
 import com.pardyl.chatbot.core.entities.Reaction;
+import com.pardyl.chatbot.core.events.EventProcessor;
+import com.pardyl.chatbot.core.events.OnMessageEvent;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class Responses {
     public interface ResponseCollectionBuilder {
@@ -90,5 +98,75 @@ public final class Responses {
     public static MessageResponse reactionName(String reaction) {
         return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendReaction(
                 originalMessage.getChannel().getServer().getReactionForName(reaction)).build());
+    }
+
+    public static MessageResponse adminTask(Function<Message, String> taskName) {
+        return message -> bot -> {
+            try {
+                InputStream stream = bot.runAdminTask(taskName.apply(message));
+                BufferedReader in = new BufferedReader(new InputStreamReader(stream));
+                String line;
+                while ((line = in.readLine()) != null) {
+                    line = line.trim();
+                    if (!line.isEmpty()) {
+                        message.getChannel().sendMessage(bot.getMessageFactory().appendText(line).build(), bot);
+                    }
+                }
+            } catch (Exception ex) {
+                message.getChannel().sendMessage(bot.getMessageFactory().appendText(ex.toString()).build(), bot);
+            }
+        };
+    }
+
+    public static MessageResponse adminTask(String taskName) {
+        return adminTask(m -> taskName);
+    }
+
+    public static MessageResponse shutdown() {
+        return message -> BotInstance::shutdown;
+    }
+
+    public static MessageResponse chain(EventProcessor processor) {
+        return message -> processor.trigger(new OnMessageEvent(message));
+    }
+
+    public static MessageResponse responseList(MessageResponse... responses) {
+        return message -> bot -> Stream.of(responses).forEach(resp -> resp.respondTo(message).run(bot));
+    }
+
+    public static <T> T randomChoice(List<T> list) {
+        return list.get(ThreadLocalRandom.current().nextInt(list.size()));
+    }
+
+    @SafeVarargs
+    public static <T> T randomChoice(T... choices) {
+        return choices[ThreadLocalRandom.current().nextInt(choices.length)];
+    }
+
+    public static class RandomMessageResponse {
+        final MessageResponse response;
+        final double weight;
+
+        private RandomMessageResponse(MessageResponse response, double weight) {
+            this.response = response;
+            this.weight = weight;
+        }
+    }
+
+    public static MessageResponse randomResponse(RandomMessageResponse... responses) {
+        double sum = Stream.of(responses).mapToDouble(resp -> resp.weight).sum();
+        double choice = ThreadLocalRandom.current().nextDouble(sum);
+        double current = 0.0;
+        for (RandomMessageResponse response : responses) {
+            current += response.weight;
+            if (current >= choice) {
+                return response.response;
+            }
+        }
+        return responses[responses.length - 1].response;
+    }
+
+    public static RandomMessageResponse chance(MessageResponse response, double weight) {
+        return new RandomMessageResponse(response, weight);
     }
 }
