@@ -2,6 +2,7 @@ package com.pardyl.chatbot.core.processors;
 
 import com.pardyl.chatbot.core.BotInstance;
 import com.pardyl.chatbot.core.entities.Message;
+import com.pardyl.chatbot.core.entities.Reaction;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -75,5 +76,19 @@ public final class Responses {
 
     public static MessageResponse sendPrivateFile(InputStream data, String uploadName) {
         return (message -> bot -> message.getAuthor().getPrivateChannel().sendFile(data, uploadName, null, bot));
+    }
+
+    public static MessageResponse reaction(Reaction reaction) {
+        return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendReaction(reaction).build());
+    }
+
+    public static MessageResponse reactionId(String reaction) {
+        return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendReaction(
+                originalMessage.getChannel().getServer().getReactionForId(reaction)).build());
+    }
+
+    public static MessageResponse reactionName(String reaction) {
+        return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendReaction(
+                originalMessage.getChannel().getServer().getReactionForName(reaction)).build());
     }
 }

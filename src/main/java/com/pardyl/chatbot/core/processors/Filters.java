@@ -10,28 +10,84 @@ public final class Filters {
         return message -> message.getAuthor().equals(user);
     }
 
+    public static MessageFilter sendById(String user) {
+        return message -> message.getAuthor().getId().equals(user);
+    }
+
+    public static MessageFilter sendByName(String user) {
+        return message -> message.getAuthor().getName().equals(user);
+    }
+
     public static MessageFilter inChannel(Channel channel) {
         return message -> message.getChannel().equals(channel);
+    }
+
+    public static MessageFilter inChannelId(String channel) {
+        return message -> message.getChannel().getId().equals(channel);
+    }
+
+    public static MessageFilter inChannelName(String channel) {
+        return message -> message.getChannel().getName().equals(channel);
     }
 
     public static MessageFilter inServer(Server server) {
         return message -> message.getChannel().getServer().equals(server);
     }
 
+    public static MessageFilter inServerId(String server) {
+        return message -> message.getChannel().getServer().getId().equals(server);
+    }
+
+    public static MessageFilter inServerName(String server) {
+        return message -> message.getChannel().getServer().getName().equals(server);
+    }
+
     public static MessageFilter senderHasRole(Role role) {
         return message -> message.getChannel().getServer().hasRole(message.getAuthor(), role);
     }
 
-    public static MessageFilter mentions(User user) {
+    public static MessageFilter senderHasRoleId(String role) {
+        return message -> message.getChannel().getServer().hasRole(message.getAuthor(), message.getChannel().getServer().getRoleForId(role));
+    }
+
+    public static MessageFilter senderHasRoleName(String role) {
+        return message -> message.getChannel().getServer().hasRole(message.getAuthor(), message.getChannel().getServer().getRoleForName(role));
+    }
+
+    public static MessageFilter mentionsUser(User user) {
         return message -> message.getMentionedUsers().contains(user);
     }
 
-    public static MessageFilter mentions(Role role) {
+    public static MessageFilter mentionsUserId(String user) {
+        return message -> message.getMentionedUsers().contains(message.getChannel().getServer().getUserForId(user));
+    }
+
+    public static MessageFilter mentionsUserName(String user) {
+        return message -> message.getMentionedUsers().contains(message.getChannel().getServer().getUserForName(user));
+    }
+
+    public static MessageFilter mentionsRole(Role role) {
         return message -> message.getMentionedRoles().contains(role);
     }
 
-    public static MessageFilter mentions(Channel channel) {
+    public static MessageFilter mentionsRoleId(String role) {
+        return message -> message.getMentionedRoles().contains(message.getChannel().getServer().getRoleForId(role));
+    }
+
+    public static MessageFilter mentionsRoleName(String role) {
+        return message -> message.getMentionedRoles().contains(message.getChannel().getServer().getRoleForName(role));
+    }
+
+    public static MessageFilter mentionsChannel(Channel channel) {
         return message -> message.getMentionedChannels().contains(channel);
+    }
+
+    public static MessageFilter mentionsChannelId(String channel) {
+        return message -> message.getMentionedChannels().contains(message.getChannel().getServer().getChannelForId(channel));
+    }
+
+    public static MessageFilter mentionsChannelName(String channel) {
+        return message -> message.getMentionedChannels().contains(message.getChannel().getServer().getChannelForName(channel));
     }
 
     public static MessageFilter textIs(String text) {

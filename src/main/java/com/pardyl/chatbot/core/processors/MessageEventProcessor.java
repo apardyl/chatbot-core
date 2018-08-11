@@ -12,7 +12,7 @@ public final class MessageEventProcessor implements EventProcessor {
     private final Predicate<Message> predicate;
     private MessageResponse response;
 
-    private static class MessageEventProcessorBuilder {
+    public static class MessageEventProcessorBuilder {
         private Predicate<Message> predicateM = (message -> true);
 
         private MessageEventProcessorBuilder(Predicate<Message>[] predicates) {
