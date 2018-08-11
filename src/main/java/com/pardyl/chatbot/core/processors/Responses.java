@@ -5,8 +5,10 @@ import com.pardyl.chatbot.core.entities.Message;
 import com.pardyl.chatbot.core.entities.Reaction;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -60,12 +62,28 @@ public final class Responses {
         return customMessagesTyping(((originalMessage, bot) -> texts.stream().map(t -> bot.getMessageFactory().appendText(t).build()).collect(Collectors.toList())));
     }
 
+    public static MessageResponse randomText(List<String> texts) {
+        return message -> text(texts.get(ThreadLocalRandom.current().nextInt(texts.size()))).respondTo(message);
+    }
+
+    public static MessageResponse randomTextTyping(List<String> texts) {
+        return message -> textTyping(texts.get(ThreadLocalRandom.current().nextInt(texts.size()))).respondTo(message);
+    }
+
     public static MessageResponse respondText(String text) {
         return customMessage(((originalMessage, bot) -> bot.getMessageFactory().appendMentionUser(originalMessage.getAuthor()).appendText(" " + text).build()));
     }
 
     public static MessageResponse respondTextTyping(String text) {
         return customMessageTyping(((originalMessage, bot) -> bot.getMessageFactory().appendMentionUser(originalMessage.getAuthor()).appendText(" " + text).build()));
+    }
+
+    public static MessageResponse randomRespondText(List<String> texts) {
+        return message -> respondText(texts.get(ThreadLocalRandom.current().nextInt(texts.size()))).respondTo(message);
+    }
+
+    public static MessageResponse randomRespondTextTyping(List<String> texts) {
+        return message -> respondTextTyping(texts.get(ThreadLocalRandom.current().nextInt(texts.size()))).respondTo(message);
     }
 
     public static MessageResponse privateText(String text) {
@@ -76,8 +94,32 @@ public final class Responses {
         return (message -> bot -> message.getAuthor().getPrivateChannel().sendMessageTyping(text, bot));
     }
 
+    public static MessageResponse randomPrivateText(List<String> texts) {
+        return message ->  privateText(texts.get(ThreadLocalRandom.current().nextInt(texts.size()))).respondTo(message);
+    }
+
+    public static MessageResponse randomPrivateTextTyping(List<String> texts) {
+        return message ->  privateTextTyping(texts.get(ThreadLocalRandom.current().nextInt(texts.size()))).respondTo(message);
+    }
+
     public static MessageResponse sendFile(InputStream data, String uploadName) {
         return (message -> bot -> message.getChannel().sendFile(data, uploadName, null, bot));
+    }
+
+    public static MessageResponse sendFile(String resourceName, Class resourceFor) {
+        return message -> bot -> {
+            try {
+                InputStream st = resourceFor.getResourceAsStream(resourceName);
+                message.getChannel().sendFile(st, resourceName, null, bot);
+                st.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
+    }
+
+    public static MessageResponse sendRandomFile(List<String> resourceNames, Class resourceFor) {
+        return message ->  sendFile(resourceNames.get(ThreadLocalRandom.current().nextInt(resourceNames.size())), resourceFor).respondTo(message);
     }
 
     public static MessageResponse sendPrivateFile(InputStream data, String uploadName) {
@@ -88,14 +130,26 @@ public final class Responses {
         return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendReaction(reaction).build());
     }
 
+    public static MessageResponse randomReaction(List<Reaction> reactions) {
+        return message ->  reaction(reactions.get(ThreadLocalRandom.current().nextInt(reactions.size()))).respondTo(message);
+    }
+
     public static MessageResponse reactionId(String reaction) {
         return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendReaction(
                 originalMessage.getChannel().getServer().getReactionForId(reaction)).build());
     }
 
+    public static MessageResponse randomReactionId(List<String> reactions) {
+        return message -> reactionId(reactions.get(ThreadLocalRandom.current().nextInt(reactions.size()))).respondTo(message);
+    }
+
     public static MessageResponse reactionName(String reaction) {
         return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendReaction(
                 originalMessage.getChannel().getServer().getReactionForName(reaction)).build());
+    }
+
+    public static MessageResponse randomReactionName(List<String> reactions) {
+        return message -> reactionName(reactions.get(ThreadLocalRandom.current().nextInt(reactions.size()))).respondTo(message);
     }
 
     public static MessageResponse adminTask(Function<Message, String> taskName) {
@@ -128,15 +182,6 @@ public final class Responses {
         return message -> bot -> Stream.of(responses).forEach(resp -> resp.respondTo(message).run(bot));
     }
 
-    public static <T> T randomChoice(List<T> list) {
-        return list.get(ThreadLocalRandom.current().nextInt(list.size()));
-    }
-
-    @SafeVarargs
-    public static <T> T randomChoice(T... choices) {
-        return choices[ThreadLocalRandom.current().nextInt(choices.length)];
-    }
-
     public static class RandomMessageResponse {
         final MessageResponse response;
         final double weight;
@@ -147,17 +192,31 @@ public final class Responses {
         }
     }
 
-    public static MessageResponse randomResponse(RandomMessageResponse... responses) {
-        double sum = Stream.of(responses).mapToDouble(resp -> resp.weight).sum();
-        double choice = ThreadLocalRandom.current().nextDouble(sum);
-        double current = 0.0;
-        for (RandomMessageResponse response : responses) {
-            current += response.weight;
-            if (current >= choice) {
-                return response.response;
+    public static MessageResponse randomResponse(MessageResponse... responses) {
+        return randomResponse(Arrays.asList(responses));
+    }
+
+    public static MessageResponse randomResponse(List<MessageResponse> responses) {
+        return message -> responses.get(ThreadLocalRandom.current().nextInt(responses.size())).respondTo(message);
+    }
+
+    public static MessageResponse randomResponseWeighted(RandomMessageResponse... responses) {
+        return randomResponseWeighted(Arrays.asList(responses));
+    }
+
+    public static MessageResponse randomResponseWeighted(List<RandomMessageResponse> responses) {
+        double sum = responses.stream().mapToDouble(resp -> resp.weight).sum();
+        return message -> {
+            double choice = ThreadLocalRandom.current().nextDouble(sum);
+            double current = 0.0;
+            for (RandomMessageResponse response : responses) {
+                current += response.weight;
+                if (current >= choice) {
+                    return response.response.respondTo(message);
+                }
             }
-        }
-        return responses[responses.length - 1].response;
+            return responses.get(responses.size() - 1).response.respondTo(message);
+        };
     }
 
     public static RandomMessageResponse chance(MessageResponse response, double weight) {
