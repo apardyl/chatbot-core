@@ -3,8 +3,6 @@ package com.pardyl.chatbot.core.processors;
 import com.pardyl.chatbot.core.BotInstance;
 import com.pardyl.chatbot.core.entities.Message;
 import com.pardyl.chatbot.core.entities.Reaction;
-import com.pardyl.chatbot.core.events.EventProcessor;
-import com.pardyl.chatbot.core.events.OnMessageEvent;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -124,10 +122,6 @@ public final class Responses {
 
     public static MessageResponse shutdown() {
         return message -> BotInstance::shutdown;
-    }
-
-    public static MessageResponse chain(EventProcessor processor) {
-        return message -> processor.trigger(new OnMessageEvent(message));
     }
 
     public static MessageResponse responseList(MessageResponse... responses) {
