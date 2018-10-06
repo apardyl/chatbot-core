@@ -68,20 +68,20 @@ public abstract class Server {
         return getRoles().stream().filter(role -> role.getId().equals(id)).findAny().orElse(null);
     }
 
-    public abstract List<Reaction> getReactions();
+    public abstract List<Emote> getEmotes();
 
     /**
-     * Returns reaction matching given name. If more than one reaction matches returns any.
+     * Returns emote matching given name. If more than one emote matches returns any.
      */
-    public Reaction getReactionForName(String name) {
-        return getReactions().stream().filter(reaction -> reaction.getName().equals(name)).findAny().orElse(null);
+    public Emote getEmoteForName(String name) {
+        return getEmotes().stream().filter(emote -> emote.getName().equals(name)).findAny().orElse(null);
     }
 
     /**
-     * Returns reaction matching given id.
+     * Returns emote matching given id.
      */
-    public Reaction getReactionForId(String id) {
-        return getReactions().stream().filter(reaction -> reaction.getId().equals(id)).findAny().orElse(null);
+    public Emote getEmoteForId(String id) {
+        return getEmotes().stream().filter(emote -> emote.getId().equals(id)).findAny().orElse(null);
     }
 
     public abstract void kickUser(User user, BotInstance bot);

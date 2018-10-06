@@ -9,5 +9,5 @@ public interface MessageFactory {
 
     MessageFactory appendMentionRole(Role role);
 
-    MessageFactory appendReaction(Reaction reaction);
+    MessageFactory appendEmote(Emote emote);
 }

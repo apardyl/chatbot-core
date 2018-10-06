@@ -2,7 +2,7 @@ package com.pardyl.chatbot.core.processors;
 
 import com.pardyl.chatbot.core.BotInstance;
 import com.pardyl.chatbot.core.entities.Message;
-import com.pardyl.chatbot.core.entities.Reaction;
+import com.pardyl.chatbot.core.entities.Emote;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -126,30 +126,30 @@ public final class Responses {
         return (message -> bot -> message.getAuthor().getPrivateChannel().sendFile(data, uploadName, null, bot));
     }
 
-    public static MessageResponse reaction(Reaction reaction) {
-        return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendReaction(reaction).build());
+    public static MessageResponse emote(Emote emote) {
+        return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendEmote(emote).build());
     }
 
-    public static MessageResponse randomReaction(List<Reaction> reactions) {
-        return message ->  reaction(reactions.get(ThreadLocalRandom.current().nextInt(reactions.size()))).respondTo(message);
+    public static MessageResponse randomEmote(List<Emote> emotes) {
+        return message -> emote(emotes.get(ThreadLocalRandom.current().nextInt(emotes.size()))).respondTo(message);
     }
 
-    public static MessageResponse reactionId(String reaction) {
-        return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendReaction(
-                originalMessage.getChannel().getServer().getReactionForId(reaction)).build());
+    public static MessageResponse emoteId(String emote) {
+        return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendEmote(
+                originalMessage.getChannel().getServer().getEmoteForId(emote)).build());
     }
 
-    public static MessageResponse randomReactionId(List<String> reactions) {
-        return message -> reactionId(reactions.get(ThreadLocalRandom.current().nextInt(reactions.size()))).respondTo(message);
+    public static MessageResponse randomEmoteId(List<String> emotes) {
+        return message -> emoteId(emotes.get(ThreadLocalRandom.current().nextInt(emotes.size()))).respondTo(message);
     }
 
-    public static MessageResponse reactionName(String reaction) {
-        return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendReaction(
-                originalMessage.getChannel().getServer().getReactionForName(reaction)).build());
+    public static MessageResponse emoteName(String emote) {
+        return customMessage((originalMessage, botInstance) -> botInstance.getMessageFactory().appendEmote(
+                originalMessage.getChannel().getServer().getEmoteForName(emote)).build());
     }
 
-    public static MessageResponse randomReactionName(List<String> reactions) {
-        return message -> reactionName(reactions.get(ThreadLocalRandom.current().nextInt(reactions.size()))).respondTo(message);
+    public static MessageResponse randomEmoteName(List<String> emotes) {
+        return message -> emoteName(emotes.get(ThreadLocalRandom.current().nextInt(emotes.size()))).respondTo(message);
     }
 
     public static MessageResponse adminTask(Function<Message, String> taskName) {

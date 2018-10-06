@@ -2,14 +2,14 @@ package com.pardyl.chatbot.core.entities;
 
 import java.util.Objects;
 
-public final class UnicodeReaction implements Reaction {
+public final class UnicodeEmote implements Emote {
     private final int code;
 
-    public UnicodeReaction(int code) {
+    public UnicodeEmote(int code) {
         this.code = code;
     }
 
-    public UnicodeReaction(String emoji) {
+    public UnicodeEmote(String emoji) {
         this(emoji.codePointAt(0));
     }
 
@@ -17,7 +17,7 @@ public final class UnicodeReaction implements Reaction {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UnicodeReaction that = (UnicodeReaction) o;
+        UnicodeEmote that = (UnicodeEmote) o;
         return code == that.code;
     }
 

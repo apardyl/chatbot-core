@@ -23,5 +23,5 @@ public interface Message {
 
     void delete(BotInstance bot);
 
-    void addReaction(Reaction reaction, BotInstance bot);
+    void addReaction(Emote emote, BotInstance bot);
 }

@@ -1,16 +1,15 @@
 package com.pardyl.chatbot.core.events;
 
-import com.pardyl.chatbot.core.entities.Message;
-import com.pardyl.chatbot.core.entities.Reaction;
+import com.pardyl.chatbot.core.entities.MessageReaction;
+import com.pardyl.chatbot.core.entities.User;
 
 public final class OnReactionAddedEvent implements Event {
-    public final Message message;
-    public final Reaction reaction;
-    public final int count;
+    public final MessageReaction reaction;
 
-    public OnReactionAddedEvent(Message message, Reaction reaction, int count) {
-        this.message = message;
+    public final User reactingUser;
+
+    public OnReactionAddedEvent(MessageReaction reaction, User reactingUser) {
         this.reaction = reaction;
-        this.count = count;
+        this.reactingUser = reactingUser;
     }
 }

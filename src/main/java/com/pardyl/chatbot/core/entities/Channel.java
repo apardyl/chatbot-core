@@ -48,8 +48,8 @@ public abstract class Channel {
         sendMessage(bot.getMessageFactory().appendText(text).build(), bot);
     }
 
-    public void sendMessage(Reaction reaction, BotInstance bot) {
-        sendMessage(bot.getMessageFactory().appendReaction(reaction).build(), bot);
+    public void sendMessage(Emote emote, BotInstance bot) {
+        sendMessage(bot.getMessageFactory().appendEmote(emote).build(), bot);
     }
 
     public void sendMessage(User mention, BotInstance bot) {
@@ -97,8 +97,8 @@ public abstract class Channel {
         sendMessageTyping(text.stream().map(t -> bot.getMessageFactory().appendText(t).build()).collect(Collectors.toList()), bot);
     }
 
-    public void sendMessageTyping(Reaction reaction, BotInstance bot) {
-        sendMessageTyping(bot.getMessageFactory().appendReaction(reaction).build(), bot);
+    public void sendMessageTyping(Emote emote, BotInstance bot) {
+        sendMessageTyping(bot.getMessageFactory().appendEmote(emote).build(), bot);
     }
 
     public void sendMessageTyping(User mention, BotInstance bot) {
