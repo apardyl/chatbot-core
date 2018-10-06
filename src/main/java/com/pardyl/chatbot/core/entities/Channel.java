@@ -64,8 +64,6 @@ public abstract class Channel {
 
     public abstract void sendFile(InputStream data, String uploadName, Message message, BotInstance bot);
 
-    public abstract void addReaction(Message message, Reaction reaction, BotInstance bot);
-
     public abstract void sendIsTyping(BotInstance bot);
 
     public void sendMessageTyping(Message message, BotInstance bot) {

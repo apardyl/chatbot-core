@@ -1,5 +1,7 @@
 package com.pardyl.chatbot.core.entities;
 
+import com.pardyl.chatbot.core.BotInstance;
+
 import java.util.List;
 
 public interface Message {
@@ -14,4 +16,12 @@ public interface Message {
     List<Role> getMentionedRoles();
 
     List<Channel> getMentionedChannels();
+
+    void pin(BotInstance bot);
+
+    void unpin(BotInstance bot);
+
+    void delete(BotInstance bot);
+
+    void addReaction(Reaction reaction, BotInstance bot);
 }

@@ -1,5 +1,6 @@
 package com.pardyl.chatbot.core;
 
+import com.pardyl.chatbot.core.entities.Channel;
 import com.pardyl.chatbot.core.events.Event;
 import com.pardyl.chatbot.core.events.EventAction;
 import com.pardyl.chatbot.core.events.EventProcessor;
@@ -7,12 +8,12 @@ import com.pardyl.chatbot.core.entities.MessageFactory;
 import com.pardyl.chatbot.core.entities.Server;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 public abstract class BotInstance {
     private ScheduledExecutorService pool = Executors.newScheduledThreadPool(1);
@@ -20,6 +21,7 @@ public abstract class BotInstance {
     private final List<EventProcessor> eventProcessors;
     private final long typingSpeed;
     private final double typingSpeedMaxDeviation;
+    private final Function<BotInstance, Channel> getLogChannel;
 
     public final boolean addEventProcessor(EventProcessor eventProcessor) {
         return eventProcessors.add(eventProcessor);
@@ -34,6 +36,7 @@ public abstract class BotInstance {
         this.eventProcessors.addAll(configuration.getEventProcessors());
         this.typingSpeed = configuration.getTypingSpeed();
         this.typingSpeedMaxDeviation = configuration.getTypingSpeedMaxDeviation();
+        this.getLogChannel = configuration.getLogChannel();
     }
 
     public abstract void run();
@@ -64,9 +67,16 @@ public abstract class BotInstance {
 
     public final void process(Event event) {
         eventProcessors.parallelStream().forEach(processor -> {
-            EventAction action = processor.trigger(event);
-            if (action != null) {
-                pool.execute(() -> action.run(this));
+            try {
+                EventAction action = processor.trigger(event);
+                if (action != null) {
+                    pool.execute(() -> action.run(this));
+                }
+            } catch (Exception ex) {
+                Channel logChannel = getLogChannel.apply(this);
+                if (logChannel != null) {
+                    logChannel.sendMessage(ex.getMessage(), this);
+                }
             }
         });
     }
