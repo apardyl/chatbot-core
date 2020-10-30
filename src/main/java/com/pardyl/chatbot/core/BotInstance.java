@@ -73,8 +73,7 @@ public abstract class BotInstance {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             ex.printStackTrace(pw);
-            logChannel.sendMessage(ex.toString()
-                    + "\n" + sw.toString(), this);
+            logChannel.sendMessage(sw.toString().substring(0, 1000) + "...", this);
         }
         System.err.println(ex.toString());
         ex.printStackTrace();
