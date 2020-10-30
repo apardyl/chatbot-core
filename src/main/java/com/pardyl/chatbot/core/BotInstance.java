@@ -8,6 +8,8 @@ import com.pardyl.chatbot.core.entities.MessageFactory;
 import com.pardyl.chatbot.core.entities.Server;
 
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -65,24 +67,46 @@ public abstract class BotInstance {
 
     public abstract MessageFactory getMessageFactory();
 
+    protected void logException(Exception ex) {
+        Channel logChannel = getLogChannel.apply(this);
+        if (logChannel != null) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
+            logChannel.sendMessage(ex.toString()
+                    + "\n" + sw.toString(), this);
+        }
+        System.err.println(ex.toString());
+        ex.printStackTrace();
+    }
+
     public final void process(Event event) {
         eventProcessors.parallelStream().forEach(processor -> {
             try {
                 EventAction action = processor.trigger(event);
                 if (action != null) {
-                    pool.execute(() -> action.run(this));
+                    pool.execute(() -> {
+                        try {
+                            action.run(this);
+                        } catch (Exception ex) {
+                            logException(ex);
+                        }
+                    });
                 }
             } catch (Exception ex) {
-                Channel logChannel = getLogChannel.apply(this);
-                if (logChannel != null) {
-                    logChannel.sendMessage(ex.getMessage(), this);
-                }
+                logException(ex);
             }
         });
     }
 
     public final void schedule(EventAction action, long delayMilliseconds) {
-        pool.schedule(() -> action.run(this), delayMilliseconds, TimeUnit.MILLISECONDS);
+        pool.schedule(() -> {
+            try {
+                action.run(this);
+            } catch (Exception ex) {
+                logException(ex);
+            }
+        }, delayMilliseconds, TimeUnit.MILLISECONDS);
     }
 
     public final long getTypingSpeed() {

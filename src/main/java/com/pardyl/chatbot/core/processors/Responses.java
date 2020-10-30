@@ -95,11 +95,11 @@ public final class Responses {
     }
 
     public static MessageResponse randomPrivateText(List<String> texts) {
-        return message ->  privateText(texts.get(ThreadLocalRandom.current().nextInt(texts.size()))).respondTo(message);
+        return message -> privateText(texts.get(ThreadLocalRandom.current().nextInt(texts.size()))).respondTo(message);
     }
 
     public static MessageResponse randomPrivateTextTyping(List<String> texts) {
-        return message ->  privateTextTyping(texts.get(ThreadLocalRandom.current().nextInt(texts.size()))).respondTo(message);
+        return message -> privateTextTyping(texts.get(ThreadLocalRandom.current().nextInt(texts.size()))).respondTo(message);
     }
 
     public static MessageResponse sendFile(InputStream data, String uploadName) {
@@ -108,18 +108,16 @@ public final class Responses {
 
     public static MessageResponse sendFile(String resourceName, Class resourceFor) {
         return message -> bot -> {
-            try {
-                InputStream st = resourceFor.getResourceAsStream(resourceName);
+            try (InputStream st = resourceFor.getResourceAsStream(resourceName)) {
                 message.getChannel().sendFile(st, resourceName, null, bot);
-                st.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         };
     }
 
     public static MessageResponse sendRandomFile(List<String> resourceNames, Class resourceFor) {
-        return message ->  sendFile(resourceNames.get(ThreadLocalRandom.current().nextInt(resourceNames.size())), resourceFor).respondTo(message);
+        return message -> sendFile(resourceNames.get(ThreadLocalRandom.current().nextInt(resourceNames.size())), resourceFor).respondTo(message);
     }
 
     public static MessageResponse sendPrivateFile(InputStream data, String uploadName) {
